@@ -1,6 +1,7 @@
 # /// script
 # requires-python = ">=3.13"
 # dependencies = [
+#     "altair==5.5.0",
 #     "marimo",
 #     "polars==1.31.0",
 #     "pydantic==2.11.7",
@@ -314,7 +315,7 @@ async def _(BreachModel, display_results, mo, settings, v3_breaches):
 
     mo.accordion(
         {
-            "All Breaches": display_results(all)
+            "All Breaches (click on me to expand / contract)": display_results(all)
         }
     )
     return
@@ -322,32 +323,26 @@ async def _(BreachModel, display_results, mo, settings, v3_breaches):
 
 @app.cell
 def _(mo):
-    input_srch = mo.ui.text(label="Account:", full_width=True, placeholder="Enter account (email) text")
-    srch_button = mo.ui.run_button(label="Go!", tooltip="Click to run search", full_width=True)
-    mo.vstack(
-        items=[
-            input_srch,
-            srch_button
-        ],align="stretch"
-    )
-    return input_srch, srch_button
+    input_srch = mo.ui.text(label="Account:", full_width=True, placeholder="Enter account (email) text and hit Enter ↩️ or tab ⇥")
+    input_srch
+    return (input_srch,)
 
 
 @app.cell
-def _(input_srch, srch_button):
-    if srch_button.value: 
+def _(input_srch):
+    if len(input_srch.value.strip()) > 0:
         srch = input_srch.value
     return (srch,)
 
 
 @app.cell
-async def _(mo, settings, srch, srch_button, v3_search):
+async def _(input_srch, mo, settings, srch, v3_search):
     _output = None
 
     srch_results = {}
 
-    if srch_button.value:
-        print(srch)
+    if len(input_srch.value.strip()) > 0:
+        # print(srch)
         with mo.status.spinner(title="searching breaches...") as _spinner:
             srch_results = await v3_search(settings.endpoint,
                                        settings.version,
@@ -361,10 +356,10 @@ async def _(mo, settings, srch, srch_button, v3_search):
 
 
 @app.cell
-def _(show_resp, srch, srch_button, srch_results):
+def _(input_srch, show_resp, srch, srch_results):
     _stat = None
 
-    if srch_button.value:
+    if len(input_srch.value.strip()) > 0:
         _stat = show_resp(srch_results, srch)
 
     _stat
@@ -372,9 +367,9 @@ def _(show_resp, srch, srch_button, srch_results):
 
 
 @app.cell
-def _(BreachModel, srch_button, srch_results):
+def _(BreachModel, input_srch, srch_results):
     l = []
-    if srch_button.value:
+    if len(input_srch.value.strip()) > 0:
         if len(srch_results) > 0:
             for i in range(len(srch_results)):
                 m = BreachModel.model_validate(srch_results[i])
@@ -383,10 +378,10 @@ def _(BreachModel, srch_button, srch_results):
 
 
 @app.cell
-def _(display_results, l, srch, srch_button):
+def _(display_results, input_srch, l, srch):
     r = None
 
-    if srch_button.value:
+    if len(input_srch.value.strip()) > 0:
         r = display_results(l, select_multi=True, label=f"Search for Account: {srch}")
 
     r
