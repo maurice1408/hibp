@@ -329,8 +329,8 @@ async def _(BreachModel, display_results, mo, settings, v3_breaches):
             "All Breaches (click on me to expand / contract)": display_results(all)
         }
     )
-    all_breaches
-    #mo.vstack([pwned_summary, display_results(all)]) # all_breaches])
+    # all_breaches
+    mo.vstack([pwned_summary, all_breaches])
     return
 
 
@@ -391,11 +391,14 @@ def _(BreachModel, input_srch, srch_results):
 
 
 @app.cell
-def _(display_results, input_srch, l, srch):
+def _(display_results, input_srch, l, mo, srch):
     r = None
 
     if len(input_srch.value.strip()) > 0:
-        r = display_results(l, select_multi=True, label=f"Search for Account: {srch}")
+        if len(l) > 0:
+            r = display_results(l, select_multi=True, label=f"Search for Account: {srch}")
+        else:
+            r = mo.md("No results returned")
 
     r
     return (r,)
