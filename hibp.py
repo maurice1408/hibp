@@ -12,7 +12,7 @@
 
 import marimo
 
-__generated_with = "0.16.1"
+__generated_with = "0.16.5"
 app = marimo.App(width="medium")
 
 
@@ -324,13 +324,13 @@ async def _(BreachModel, display_results, mo, settings, v3_breaches):
         ]
     )
 
-    #all_breaches = mo.accordion(
-    #    {
-    #        "All Breaches (click on me to expand / contract)": display_results(all)
-    #    }
-    #)
-    #all_breaches
-    mo.vstack([pwned_summary, display_results(all)]) # all_breaches])
+    all_breaches = mo.accordion(
+        {
+            "All Breaches (click on me to expand / contract)": display_results(all)
+        }
+    )
+    all_breaches
+    #mo.vstack([pwned_summary, display_results(all)]) # all_breaches])
     return
 
 
