@@ -12,7 +12,7 @@
 
 import marimo
 
-__generated_with = "0.14.17"
+__generated_with = "0.16.1"
 app = marimo.App(width="medium")
 
 
@@ -88,7 +88,6 @@ def _(BaseModel, Field):
         IsMalware: bool
         IsSubscriptionFree: bool
         IsStealerLog: bool
-
     return (BreachModel,)
 
 
@@ -309,15 +308,29 @@ async def _(BreachModel, display_results, mo, settings, v3_breaches):
     all = []
 
     if len(breaches_results) > 0:
+        pwned_records = 0
+        pwned_websites = len(breaches_results)
         for b in range(len(breaches_results)):
+            pwned_records = pwned_records + breaches_results[b]["PwnCount"]
             bm = BreachModel.model_validate(breaches_results[b])
             all.append(bm)
 
-    mo.accordion(
-        {
-            "All Breaches (click on me to expand / contract)": display_results(all)
-        }
+    print(f"pwned_records: {pwned_records}")
+    print(f"pwned_websites: {pwned_websites}")
+
+    pwned_summary = mo.hstack([
+        mo.stat(value=pwned_websites, label="pwned websites"),
+        mo.stat(value=pwned_records, label="pwned records")
+        ]
     )
+
+    #all_breaches = mo.accordion(
+    #    {
+    #        "All Breaches (click on me to expand / contract)": display_results(all)
+    #    }
+    #)
+    #all_breaches
+    mo.vstack([pwned_summary, display_results(all)]) # all_breaches])
     return
 
 
