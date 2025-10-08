@@ -1,12 +1,12 @@
 # /// script
 # requires-python = ">=3.13"
 # dependencies = [
-#     "altair==5.5.0",
+#     "altair>=5.5.0",
 #     "marimo",
-#     "polars==1.31.0",
-#     "pydantic==2.11.7",
-#     "pydantic-settings==2.10.1",
-#     "requests==2.32.4",
+#     "polars>=1.31.0",
+#     "pydantic>=2.11.7",
+#     "pydantic-settings>=2.10.1",
+#     "requests>=2.32.4",
 # ]
 # ///
 
