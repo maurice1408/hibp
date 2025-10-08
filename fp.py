@@ -1,18 +1,18 @@
 # /// script
-# requires-python = ">=3.13"
+# requires-python = ">=3.12"
 # dependencies = [
 #     "marimo",
-#     "polars",
-#     "pydantic",
-#     "python-dotenv",
-#     "requests",
+#     "polars==1.33.1",
+#     "pydantic==2.11.9",
+#     "python-dotenv==1.1.1",
+#     "requests==2.32.5",
 # ]
 # ///
 
 import marimo
 
-__generated_with = "0.16.5"
-app = marimo.App(width="medium")
+__generated_with = "0.16.4"
+app = marimo.App(width="medium", auto_download=["html"])
 
 
 @app.cell
@@ -24,10 +24,14 @@ def _():
 @app.cell
 def _():
     import requests
+
+
+    from pydantic import BaseModel, Field
+
     from dotenv import dotenv_values
+    from dataclasses import dataclass
 
     import polars as pl
-
     from pydantic import BaseModel, Field
     from typing import Optional,List
 
@@ -36,13 +40,11 @@ def _():
     import asyncio
 
     import time
-    from dataclasses import dataclass
     return BaseModel, Field, dataclass, dotenv_values, pl, requests
 
 
 @app.cell
 def _(dataclass, dotenv_values):
-
     env_settings = dotenv_values(".env")
 
     @dataclass
@@ -52,6 +54,7 @@ def _(dataclass, dotenv_values):
         user_agent: str =  env_settings['user_agent']
         version: str =  env_settings['version']
         endpoint: str =  env_settings['endpoint']
+
 
     settings = Settings()
 
@@ -175,12 +178,17 @@ def _(get_latest_breach):
 @app.cell
 def _(mo):
     hibp_logo = mo.image(
-        src="./pwned_logo.png", alt="HIBP logo", width=220, height=70, rounded=True
+        src="./pwned_logo.png",
+        alt="HIBP logo",
+        width=220,
+        height=70,
+        rounded=True
     )
 
 
-    hibp_link = mo.md(
-        f"""To go to HIBP Search click here ▶︎ [HIBP](https://molab.marimo.io/notebooks/nb_wMzz9Ha37ETEvgUd4jvGFu/app)""")
+
+    hibp_link = mo.md(f"""To go to HIBP Search click here ▶︎ [HIBP](https://molab.marimo.io/notebooks/nb_mFFvh3EWS1F97rXMGfmC82/app)""")
+
     return hibp_link, hibp_logo
 
 
@@ -256,11 +264,6 @@ def _(all_breaches, hibp_link, hibp_logo, lb, mo, pwned_summary):
 
 
 @app.cell
-def _():
-    return
-
-
-@app.cell
 def _(hibp_stack):
     hibp_stack
     return
@@ -281,6 +284,7 @@ def _(mo):
     )
 
     deh_link = mo.md(f"""To go to DeHashed Search click here ▶︎ [DeHashed](https://molab.marimo.io/notebooks/nb_WZCbiNTCQDHXbESFDsFEHv/app)""")
+
 
     deh_stack = mo.vstack([
         mo.center(deh_logo),
@@ -304,12 +308,12 @@ def _(mo):
 @app.cell
 def _(mo):
     gh_logo = mo.image(
-        src="./github_logo.png",
+        src="./GitHub_Lockup_Dark_60.png",
         alt="GitHub",
         rounded=True
     )
 
-    gh_link = mo.md(f"""To go to GitHub Enumerator click here ▶︎ [GitHub](https://molab.marimo.io/notebooks/nb_jgioJsbeC4ALbmHMH46igT/app)""")
+    gh_link = mo.md(f"""To go to GitHub Enumerator click here ▶︎ [GitHub](https://molab.marimo.io/notebooks/nb_CftbEkCLAL9YqzKGkBQHen/app)""")
 
     gh_stack = mo.vstack([
         mo.center(gh_logo),
