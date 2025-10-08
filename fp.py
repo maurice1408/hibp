@@ -4,7 +4,7 @@
 #     "marimo",
 #     "polars",
 #     "pydantic",
-#     "pydantic-settings",
+#     "python-dotenv",
 #     "requests",
 # ]
 # ///
@@ -24,10 +24,10 @@ def _():
 @app.cell
 def _():
     import requests
-    from pydantic_settings import BaseSettings, SettingsConfigDict
-    from pydantic import BaseModel, Field
+    from dotenv import dotenv_values
 
     import polars as pl
+
     from pydantic import BaseModel, Field
     from typing import Optional,List
 
@@ -36,21 +36,23 @@ def _():
     import asyncio
 
     import time
-    return BaseModel, BaseSettings, Field, SettingsConfigDict, pl, requests
+    from dataclasses import dataclass
+    return BaseModel, Field, dataclass, dotenv_values, pl, requests
 
 
 @app.cell
-def _(BaseSettings, SettingsConfigDict):
-    class Settings(BaseSettings):
-        hibp_api_key: str
-        debug: bool = False
-        user_agent: str
-        version: str = "v3"
-        endpoint: str
-        model_config = SettingsConfigDict(
-            env_file=".env",
-            env_file_encoding="utf-8",
-        )
+def _(dataclass, dotenv_values):
+
+    env_settings = dotenv_values(".env")
+
+    @dataclass
+    class Settings():
+        hibp_api_key: str = env_settings['hibp_api_key']
+        debug: bool =  env_settings['debug']
+        user_agent: str =  env_settings['user_agent']
+        version: str =  env_settings['version']
+        endpoint: str =  env_settings['endpoint']
+
     settings = Settings()
 
     if (settings.debug):
@@ -178,7 +180,7 @@ def _(mo):
 
 
     hibp_link = mo.md(
-        f"""To go to HIBP Search click here ▶︎ [![Open in molab](https://molab.marimo.io/molab-shield.png)](https://molab.marimo.io/notebooks/nb_wMzz9Ha37ETEvgUd4jvGFu/app)""")
+        f"""To go to HIBP Search click here ▶︎ [HIBP](https://molab.marimo.io/notebooks/nb_wMzz9Ha37ETEvgUd4jvGFu/app)""")
     return hibp_link, hibp_logo
 
 
@@ -284,7 +286,6 @@ def _(mo):
         mo.center(deh_logo),
         deh_link
     ])
-
     return (deh_stack,)
 
 

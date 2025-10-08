@@ -5,7 +5,7 @@
 #     "marimo",
 #     "polars>=1.31.0",
 #     "pydantic>=2.11.7",
-#     "pydantic-settings>=2.10.1",
+#     "python-dotenv",
 #     "requests>=2.32.4",
 # ]
 # ///
@@ -20,8 +20,10 @@ app = marimo.App(width="medium")
 def _():
     import marimo as mo
     import requests
-    from pydantic_settings import BaseSettings, SettingsConfigDict
+
     from pydantic import BaseModel, Field
+
+    from dotenv import dotenv_values
 
     import polars as pl
     from pydantic import BaseModel, Field
@@ -32,30 +34,20 @@ def _():
     import asyncio
 
     import time
-    return (
-        BaseModel,
-        BaseSettings,
-        Field,
-        SettingsConfigDict,
-        mo,
-        pl,
-        requests,
-        urllib,
-    )
+    return BaseModel, Field, dotenv_values, mo, pl, requests, urllib
 
 
 @app.cell
-def _(BaseSettings, SettingsConfigDict):
-    class Settings(BaseSettings):
-        hibp_api_key: str
-        debug: bool = False
-        user_agent: str
-        version: str = "v3"
-        endpoint: str
-        model_config = SettingsConfigDict(
-            env_file=".env",
-            env_file_encoding="utf-8",
-        )
+def _(dotenv_values):
+    env_settings = dotenv_values(".env")
+
+    class Settings():
+        hibp_api_key: str = env_settings['hibp_api_key']
+        debug: bool =  env_settings['debug']
+        user_agent: str =  env_settings['user_agent']
+        version: str =  env_settings['version']
+        endpoint: str =  env_settings['endpoint']
+
     settings = Settings()
 
     if (settings.debug):
@@ -101,11 +93,14 @@ def _(requests, settings, urllib):
 
         url = f"{settings.endpoint}/{settings.version}/breachedaccount/{urllib.parse.quote(srch, encoding='utf-8')}?truncateResponse=False"
 
-        # if regex:
-        #    qry = urllib.parse.urlencode(qry)
+        if settings.debug:
+            print(f"v3_search url: {url}")
 
         res = requests.get(url,
                            headers=headers)
+
+        if settings.debug:
+            print(f"v3_search status code: {res.status_code}")
 
         match res.status_code:
             case 200:
