@@ -12,7 +12,7 @@
 
 import marimo
 
-__generated_with = "0.16.5"
+__generated_with = "0.17.8"
 app = marimo.App(width="medium")
 
 
@@ -27,9 +27,9 @@ def _():
 
     import polars as pl
     from pydantic import BaseModel, Field
-    from typing import Optional,List
+    from typing import Optional, List
 
-    import urllib.parse 
+    import urllib.parse
 
     import asyncio
 
@@ -41,16 +41,18 @@ def _():
 def _(dotenv_values):
     env_settings = dotenv_values(".env")
 
-    class Settings():
-        hibp_api_key: str = env_settings['hibp_api_key']
-        debug: bool =  env_settings['debug']
-        user_agent: str =  env_settings['user_agent']
-        version: str =  env_settings['version']
-        endpoint: str =  env_settings['endpoint']
+
+    class Settings:
+        hibp_api_key: str = env_settings["hibp_api_key"]
+        debug: bool = env_settings["debug"]
+        user_agent: str = env_settings["user_agent"]
+        version: str = env_settings["version"]
+        endpoint: str = env_settings["endpoint"]
+
 
     settings = Settings()
 
-    if (settings.debug):
+    if settings.debug:
         print(settings.hibp_api_key)
         print(settings.debug)
         print(settings.user_agent)
@@ -66,9 +68,9 @@ def _(BaseModel, Field):
         Name: str
         Title: str
         Domain: str
-        BreachDate: str # date	
-        AddedDate:	str # datetime	
-        ModifiedDate: str #	datetime	
+        BreachDate: str  # date
+        AddedDate: str  # datetime
+        ModifiedDate: str  # datetime
         PwnCount: int
         Description: str
         DataClasses: list = Field(default_factory=list)
@@ -85,19 +87,22 @@ def _(BaseModel, Field):
 
 @app.cell
 def _(requests, settings, urllib):
-    async def v3_search(endpoint: str, version: str, hibp_api_key: str, user_agent: str, srch: str) -> dict:
-
+    async def v3_search(
+        endpoint: str, version: str, hibp_api_key: str, user_agent: str, srch: str
+    ) -> dict:
         print(endpoint)
 
-        headers = {'hibp-api-key': settings.hibp_api_key, 'User-Agent': settings.user_agent}
+        headers = {
+            "hibp-api-key": settings.hibp_api_key,
+            "User-Agent": settings.user_agent,
+        }
 
         url = f"{settings.endpoint}/{settings.version}/breachedaccount/{urllib.parse.quote(srch, encoding='utf-8')}?truncateResponse=False"
 
         if settings.debug:
             print(f"v3_search url: {url}")
 
-        res = requests.get(url,
-                           headers=headers)
+        res = requests.get(url, headers=headers)
 
         if settings.debug:
             print(f"v3_search status code: {res.status_code}")
@@ -114,21 +119,24 @@ def _(requests, settings, urllib):
 
 @app.cell
 def _(requests, settings, urllib):
-    async def v3_stealers(endpoint: str, version: str, hibp_api_key: str, user_agent: str, srch: str) -> dict:
-
+    async def v3_stealers(
+        endpoint: str, version: str, hibp_api_key: str, user_agent: str, srch: str
+    ) -> dict:
         # print(endpoint)
 
-        headers = {'hibp-api-key': settings.hibp_api_key, 'User-Agent': settings.user_agent}
+        headers = {
+            "hibp-api-key": settings.hibp_api_key,
+            "User-Agent": settings.user_agent,
+        }
 
         url = f"{settings.endpoint}/{settings.version}/stealerlogsbyemail/{urllib.parse.quote(srch, encoding='utf-8')}"
 
         # if regex:
         #    qry = urllib.parse.urlencode(qry)
 
-        res = requests.get(url,
-                           headers=headers)
+        res = requests.get(url, headers=headers)
 
-        if (settings.debug):
+        if settings.debug:
             print(res.status_code)
 
         match res.status_code:
@@ -147,21 +155,24 @@ def _(requests, settings, urllib):
 
 @app.cell
 def _(requests, settings, urllib):
-    async def v3_pastes(endpoint: str, version: str, hibp_api_key: str, user_agent: str, srch: str) -> dict:
-
+    async def v3_pastes(
+        endpoint: str, version: str, hibp_api_key: str, user_agent: str, srch: str
+    ) -> dict:
         # print(endpoint)
 
-        headers = {'hibp-api-key': settings.hibp_api_key, 'User-Agent': settings.user_agent}
+        headers = {
+            "hibp-api-key": settings.hibp_api_key,
+            "User-Agent": settings.user_agent,
+        }
 
         url = f"{settings.endpoint}/{settings.version}/pasteaccount/{urllib.parse.quote(srch, encoding='utf-8')}"
 
         # if regex:
         #    qry = urllib.parse.urlencode(qry)
 
-        res = requests.get(url,
-                           headers=headers)
+        res = requests.get(url, headers=headers)
 
-        if (settings.debug):
+        if settings.debug:
             print(res.status_code)
 
         match res.status_code:
@@ -180,21 +191,24 @@ def _(requests, settings, urllib):
 
 @app.cell
 def _(requests, settings):
-    async def v3_breaches(endpoint: str, version: str, hibp_api_key: str, user_agent: str) -> dict:
-
+    async def v3_breaches(
+        endpoint: str, version: str, hibp_api_key: str, user_agent: str
+    ) -> dict:
         # print(endpoint)
 
-        headers = {'hibp-api-key': settings.hibp_api_key, 'User-Agent': settings.user_agent}
+        headers = {
+            "hibp-api-key": settings.hibp_api_key,
+            "User-Agent": settings.user_agent,
+        }
 
         url = f"{settings.endpoint}/{settings.version}/breaches"
 
         # if regex:
         #    qry = urllib.parse.urlencode(qry)
 
-        res = requests.get(url,
-                           headers=headers)
+        res = requests.get(url, headers=headers)
 
-        if (settings.debug):
+        if settings.debug:
             print(res.status_code)
 
         match res.status_code:
@@ -214,8 +228,10 @@ def _(requests, settings):
 @app.cell
 def _(requests, settings):
     def get_latest_breach() -> dict:
-
-        headers = {'hibp-api-key': settings.hibp_api_key, 'User-Agent': settings.user_agent}
+        headers = {
+            "hibp-api-key": settings.hibp_api_key,
+            "User-Agent": settings.user_agent,
+        }
 
         url = f"{settings.endpoint}/{settings.version}/latestbreach"
 
@@ -228,25 +244,23 @@ def _(requests, settings):
 @app.cell
 def _(pl):
     def conv_to_str(df):
-
         join_str = " / "
 
         return df.with_columns(
             pl.col("BreachDate").cast(pl.Date),
             pl.col("AddedDate").cast(pl.Datetime),
             pl.col("ModifiedDate").cast(pl.Datetime),
-            pl.col("DataClasses").cast(pl.List(pl.String)).list.join(join_str)
-            )
+            pl.col("DataClasses").cast(pl.List(pl.String)).list.join(join_str),
+        )
     return (conv_to_str,)
 
 
 @app.cell
 def _(conv_to_str, mo, pl):
     def display_results(results, label="", select_multi=False):
-
         df = pl.DataFrame(results)
         df_str = conv_to_str(df)
-        if (select_multi):
+        if select_multi:
             y = mo.ui.table(df_str, selection="multi", label=label)
         else:
             y = mo.ui.table(df_str, selection="single-cell", label=label)
@@ -259,7 +273,6 @@ def _(conv_to_str, mo, pl):
 @app.cell
 def _(mo):
     def show_resp(rsp, srch):
-
         srch_term = mo.stat(label="Search Term", value=srch)
         srch_ent = mo.stat(label="Pwned's Returned", value=len(rsp))
 
@@ -275,30 +288,30 @@ def _(get_latest_breach):
 
 @app.cell
 def _(latest, mo):
-    mo.md(
-        f"""
+    mo.md(f"""
     # Latest Breach
 
-    The latest breach added here is **{latest['Title']}**, the breach date was {latest['BreachDate']}
+    The latest breach added here is **{latest["Title"]}**, the breach date was {latest["BreachDate"]}
 
-    Number of records in this breach was {latest['PwnCount']:,}
+    Number of records in this breach was {latest["PwnCount"]:,}
 
     ## Description
 
-    {latest['Description']}
-    """
-    )
+    {latest["Description"]}
+    """)
     return
 
 
 @app.cell
 async def _(BreachModel, display_results, mo, settings, v3_breaches):
     with mo.status.spinner(title="Fecthing breaches...") as _spinner:
-            breaches_results = await v3_breaches(settings.endpoint,
-                                       settings.version,
-                                       settings.hibp_api_key,
-                                       settings.user_agent)
-            _spinner.update("Done")
+        breaches_results = await v3_breaches(
+            settings.endpoint,
+            settings.version,
+            settings.hibp_api_key,
+            settings.user_agent,
+        )
+        _spinner.update("Done")
 
     all = []
 
@@ -313,16 +326,15 @@ async def _(BreachModel, display_results, mo, settings, v3_breaches):
     print(f"pwned_records: {pwned_records}")
     print(f"pwned_websites: {pwned_websites}")
 
-    pwned_summary = mo.hstack([
-        mo.stat(value=pwned_websites, label="pwned websites"),
-        mo.stat(value=pwned_records, label="pwned records")
+    pwned_summary = mo.hstack(
+        [
+            mo.stat(value=pwned_websites, label="pwned websites"),
+            mo.stat(value=pwned_records, label="pwned records"),
         ]
     )
 
     all_breaches = mo.accordion(
-        {
-            "All Breaches (click on me to expand / contract)": display_results(all)
-        }
+        {"All Breaches (click on me to expand / contract)": display_results(all)}
     )
     # all_breaches
     mo.vstack([pwned_summary, all_breaches])
@@ -331,7 +343,11 @@ async def _(BreachModel, display_results, mo, settings, v3_breaches):
 
 @app.cell
 def _(mo):
-    input_srch = mo.ui.text(label="Account:", full_width=True, placeholder="Enter account (email) text and hit Enter ↩️ or tab ⇥")
+    input_srch = mo.ui.text(
+        label="Account:",
+        full_width=True,
+        placeholder="Enter account (email) text and hit Enter ↩️ or tab ⇥",
+    )
     input_srch
     return (input_srch,)
 
@@ -352,11 +368,13 @@ async def _(input_srch, mo, settings, srch, v3_search):
     if len(input_srch.value.strip()) > 0:
         # print(srch)
         with mo.status.spinner(title="searching breaches...") as _spinner:
-            srch_results = await v3_search(settings.endpoint,
-                                       settings.version,
-                                       settings.hibp_api_key,
-                                       settings.user_agent,
-                                       srch,)
+            srch_results = await v3_search(
+                settings.endpoint,
+                settings.version,
+                settings.hibp_api_key,
+                settings.user_agent,
+                srch,
+            )
             _spinner.update("Done")
 
     _output
@@ -391,7 +409,9 @@ def _(display_results, input_srch, l, mo, srch):
 
     if len(input_srch.value.strip()) > 0:
         if len(l) > 0:
-            r = display_results(l, select_multi=True, label=f"Search for Account: {srch}")
+            r = display_results(
+                l, select_multi=True, label=f"Search for Account: {srch}"
+            )
         else:
             r = mo.md("No results returned")
 
